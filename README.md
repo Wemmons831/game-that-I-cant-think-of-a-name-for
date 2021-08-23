@@ -13,3 +13,5 @@ If you are going to build it yourself I used Mgwin and the command found in comp
     -  add title screen
     -  unload everything at the end
     -  add audio
+
+This game is what all of my friends describe to me a pong rip off with power ups and they are not wrong hope u enjoy playing the game
