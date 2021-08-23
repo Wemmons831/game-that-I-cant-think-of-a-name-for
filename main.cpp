@@ -1,14 +1,48 @@
-
 #include "include/raylib.h"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+const int screenWidth = 1280;
+const int screenHeight = 720;
+ int ball_speed = 10;
+//  o = right , 1 = left
+int ball_direction = 0;
+Vector2 ball = {screenWidth/2 , screenHeight/2};
+int ball_rad = 10;
+int y_angle = 0;
+Rectangle ball_hitbox = {ball.x, ball.y, ball_rad *2, ball_rad *2};
+struct powerup{
+    Texture2D texture;
+    bool spawn = false;
+    Vector2 pos;
+    bool collison = false;
+    std::string name;
+};
+void selection(powerup& selected)
+    {
+        if(selected.spawn == false){
+            std::cout << "spawn";
+            selected.spawn = true;
+            selected.pos.x = rand () %screenWidth;
+            if (selected.pos.x > screenWidth){
+                selected.pos.x = screenWidth;
+            }
+            selected.pos.y = rand () %screenHeight;
+            if (selected.pos.y > screenHeight){
+                selected.pos.y = screenHeight;
+            }
+                std::cout << selected.pos.x << selected.pos.y;
+                std::cout << selected.name;
+                
+            }
+            
+    }
+
 int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 1280;
-    const int screenHeight = 720;
+    
     Image icon = LoadImage("sprites/icon.png");
     //audio
     InitWindow(screenWidth, screenHeight, "GAME THAT I CANT THINK OF A NAME FOR");
@@ -23,12 +57,7 @@ int main(void)
     int rectangle_height = 200;
     bool wrapping = false;
     //ball
-    int ball_speed = 10;
-    //  o = right , 1 = left
-    int ball_direction = 0;
-     Vector2 ball = {screenWidth/2 , screenHeight/2};
-     int ball_rad = 10;
-    int y_angle = 0;
+   
     //scores
     int score = 0;
   
@@ -38,25 +67,27 @@ int main(void)
     bool collision1 = false;
     //rectangles
     Rectangle rec1 = {};
-    Rectangle ball_hitbox = {ball.x, ball.y, ball_rad *2, ball_rad *2};
+  
     //power ups
     int powerup_spawn;
-        // speed increes
-            Texture2D powerup_speed = LoadTexture("sprites/speed.png");
-            bool spawn_speed = false;
-            Vector2 speed_pos = {0,0};
-        // speed decrease
-            Texture2D powerup_slow = LoadTexture("sprites/slow.png");
-            bool spawn_slow = false;
-            Vector2 slow_pos = {0,0};
-        // paddle up
-            Texture2D powerup_paddle_up = LoadTexture("sprites/paddle_up.png");
-            bool spawn_paddle_up = false;
-            Vector2 paddle_up_pos = {0,0};
-        // paddle down
-            Texture2D powerup_paddle_down = LoadTexture("sprites/paddle_down.png");
-            bool spawn_paddle_down = false;
-            Vector2 paddle_down_pos = {0,0};
+    
+    powerup speed;
+    speed.texture = LoadTexture("sprites/speed.png");
+    speed.name = "speed";
+    powerup slow;
+    slow.texture = LoadTexture("sprites/slow.png");
+    slow.name = "slow";
+    powerup paddle_up;
+    paddle_up.texture = LoadTexture("sprites/paddle_up.png");
+    paddle_up.name = "paddle_up";
+    powerup paddle_down;
+    paddle_down.texture = LoadTexture("sprites/paddle_down.png");
+    paddle_down.name = "paddle_down";
+    
+    
+
+
+
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
@@ -90,10 +121,11 @@ int main(void)
            y_angle = 0;
            score = 0;
            ball_speed = 10;
-           spawn_speed = false;
-           spawn_slow = false;
-           spawn_paddle_up = false;
-           spawn_paddle_down = false;
+           vertical_speed = 5;
+           speed.spawn = false;
+           slow.spawn = false;
+           paddle_up.spawn = false;
+           paddle_down.spawn = false;
            
         }
         rec1 = {25, rec_player1_pos_y , 50 ,rectangle_height};
@@ -131,106 +163,59 @@ int main(void)
             ball.y += y_angle;
         }
         
-        powerup_spawn = rand() %3000;
-        switch (powerup_spawn)
+        powerup_spawn = rand() %2000;
+       switch (powerup_spawn)
         {
         case 53:
+            std::cout << "called";
+            selection(speed);
             
-            if(spawn_speed == false){
-            std::cout << "spawn";
-            spawn_speed = true;
-            speed_pos.x = rand () %screenWidth;
-            if (speed_pos.x > screenWidth){
-                speed_pos.x = screenWidth;
-            }
-            speed_pos.y = rand () %screenHeight;
-            if (speed_pos.y > screenHeight){
-                speed_pos.y = screenHeight;
-            }
-                std::cout << speed_pos.x << speed_pos.y;
-            }
             break;
         case 785:
-            if(spawn_slow == false){
-            std::cout << "spawn";
-            spawn_slow = true;
-            slow_pos.x = rand () %screenWidth;
-            if (slow_pos.x > screenWidth){
-                slow_pos.x = screenWidth;
-            }
-            slow_pos.y = rand () %screenHeight;
-            if (slow_pos.y > screenHeight){
-                slow_pos.y = screenHeight;
-            }
-                std::cout << slow_pos.x << slow_pos.y;
-            }
+            selection(slow);
+            std::cout << "called";
         case 892:
-            if(spawn_paddle_up == false){
-            std::cout << "spawn";
-            spawn_paddle_up = true;
-            paddle_up_pos.x = rand () %screenWidth;
-            if (paddle_up_pos.x > screenWidth){
-                paddle_up_pos.x = screenWidth;
-            }
-            paddle_up_pos.y = rand () %screenHeight;
-            if (paddle_up_pos.y > screenHeight){
-                paddle_up_pos.y = screenHeight;
-            }
-                std::cout << paddle_up_pos.x << paddle_up_pos.y;
-            }
+          selection(paddle_up);
+          std::cout << "called";
+           
         case 26:
-            if(spawn_paddle_down == false){
-            std::cout << "spawn";
-            spawn_paddle_down = true;
-            paddle_down_pos.x = rand () %screenWidth;
-            if (paddle_down_pos.x > screenWidth){
-                paddle_down_pos.x = screenWidth;
-            }
-            paddle_down_pos.y = rand () %screenHeight;
-            if (paddle_down_pos.y > screenHeight){
-                paddle_down_pos.y = screenHeight;
-            }
-                std::cout << paddle_down_pos.x << paddle_down_pos.y;
-            }
+            selection(paddle_down);
+            std::cout << "called";
         default:
             break;
         }
-        if(spawn_speed){
-        
-        bool speed_collison = CheckCollisionRecs({speed_pos.x,speed_pos.y,50,50}, ball_hitbox);
-        if(speed_collison){
+        if(speed.spawn){
+        speed.collison =  CheckCollisionRecs({speed.pos.x,speed.pos.y,50,50}, ball_hitbox);
+        if(speed.collison){
             ball_speed +=3;
             std::cout << "hit";
-            spawn_speed = false;
+            speed.spawn = false;
         }
         }
-        if(spawn_slow){
-        
-        bool slow_collison = CheckCollisionRecs({slow_pos.x,slow_pos.y,50,50}, ball_hitbox);
-        if(slow_collison){
+        if(slow.spawn){
+        slow.collison = CheckCollisionRecs({slow.pos.x,slow.pos.y,50,50}, ball_hitbox);
+        if(slow.collison){
             ball_speed -=3;
             std::cout << "hit";
-            spawn_slow = false;
+            slow.spawn = false;
             }
         }
         
-        if(spawn_paddle_up){
-        
-        bool paddle_up_collison = CheckCollisionRecs({paddle_up_pos.x,paddle_up_pos.y,50,50}, ball_hitbox);
-        if(paddle_up_collison){
+        if(paddle_up.collison){
+            paddle_up.collison = CheckCollisionRecs({paddle_up.pos.x,paddle_up.pos.y,50,50}, ball_hitbox);
+        if(paddle_up.collison){
             vertical_speed += 3;
             std::cout << "hit";
-            spawn_paddle_up = false;
+            paddle_up.spawn = false;
             }
         }
 
-         if(spawn_paddle_down){
-        
-        bool paddle_down_collison = CheckCollisionRecs({paddle_down_pos.x,paddle_down_pos.y,50,50}, ball_hitbox);
-        if(paddle_down_collison){
+         if(paddle_down.spawn){
+            paddle_down.collison = CheckCollisionRecs({paddle_down.pos.x,paddle_down.pos.y,50,50}, ball_hitbox);
+        if(paddle_down.collison){
             vertical_speed -= 3;
             std::cout << "hit";
-            spawn_paddle_down = false;
+            paddle_down.spawn = false;
             }
         }
         //----------------------------------------------------------------------------------
@@ -264,24 +249,26 @@ int main(void)
         DrawText(vertical_speed2, 350,50, font_size, WHITE);
         
 
-        if (spawn_speed){
-            DrawTexture(powerup_speed, speed_pos.x - powerup_speed.width/2, speed_pos.y - powerup_speed.height/2, WHITE);
+        if (speed.spawn){
+            DrawTexture(speed.texture, speed.pos.x - speed.texture.width/2, speed.pos.y - speed.texture.height/2, WHITE);
         }
-        if (spawn_slow){
-            DrawTexture(powerup_slow, slow_pos.x - powerup_slow.width/2, slow_pos.y - powerup_slow.height/2, WHITE);
+        if (slow.spawn){
+            DrawTexture(slow.texture, slow.pos.x - slow.texture.width/2, slow.pos.y - slow.texture.height/2, WHITE);
         }
-        if (spawn_paddle_up){
-            DrawTexture(powerup_paddle_up, paddle_up_pos.x - powerup_paddle_up.width/2, paddle_up_pos.y - powerup_paddle_up.height/2, WHITE);
+        if (paddle_up.spawn){
+            DrawTexture(paddle_up.texture, paddle_up.pos.x - paddle_up.texture.width/2, paddle_up.pos.y - paddle_up.texture.height/2, WHITE);
         }
-        if (spawn_paddle_down){
-            DrawTexture(powerup_paddle_down, paddle_down_pos.x - powerup_paddle_down.width/2, paddle_down_pos.y - powerup_paddle_down.height/2, WHITE);
+        if (paddle_down.spawn){
+            DrawTexture(paddle_down.texture, paddle_down.pos.x - paddle_down.texture.width/2, paddle_down.pos.y - paddle_down.texture.height/2, WHITE);
         }
         
         EndDrawing();
+       
         //----------------------------------------------------------------------------------
     }
-
+    
     // De-Initialization
+    CloseAudioDevice();
     //--------------------------------------------------------------------------------------
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
