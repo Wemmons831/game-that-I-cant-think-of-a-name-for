@@ -8,7 +8,8 @@ If you are going to build it yourself I used Mgwin and the command found in comp
  - In the next update I will:
     -  add a makefile
     -  fix issues with powerups spawning behind paddle
-    -  **organize everything**
     -  add more powerups I have a few ideas in midn but lmk if you have any
     -  fix spelling mistakes
     -  add title screen
+    -  unload everything at the end
+    -  add audio
